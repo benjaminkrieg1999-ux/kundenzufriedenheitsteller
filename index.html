@@ -2396,6 +2396,13 @@ section.v{display:none}section.v.on{display:block;animation:fade .35s var(--ease
 .slot{padding:10px 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;font:inherit;font-weight:700;color:var(--ink)}.slot.on{border-color:var(--acc);background:var(--acc);color:#fff}
 .kdone{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--acc-soft);font-size:14.5px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .kdone a{font-weight:800;color:var(--acc);text-decoration:none}
+.val{margin-top:14px;padding:14px;border-radius:14px;background:var(--acc-soft)}
+.val .vb{font-family:Newsreader,Georgia,serif;font-size:26px;color:var(--acc);line-height:1.1}
+.val small{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
+.proof{margin-top:14px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);font-size:13px;color:var(--muted)}.proof b{color:var(--ink)}
+.note2{margin:22px auto 0;max-width:680px;display:flex;gap:14px;align-items:flex-start;text-align:left;padding:16px;border-radius:16px;background:var(--bg);border:1px solid var(--line)}
+.note2 .ph{flex:0 0 52px;width:52px;height:52px}.note2 p{margin:0;font-size:15px}.note2 small{display:block;color:var(--muted);margin-top:6px}
+.cap{font-size:12.5px;color:var(--muted);margin-top:6px}
 </style></head><body>
 <div class="wrap">
  <div class="top"><div class="brand">VANTOR</div><div class="for" id="forLine">Ihr Auftrag in zwei Minuten</div></div>
@@ -2403,7 +2410,9 @@ section.v{display:none}section.v.on{display:block;animation:fade .35s var(--ease
  <div class="grid">
   <div class="card">
    <section class="v on" id="s1">
-    <h1>Starten wir.</h1><p class="lede">Paket wählen, Bausteine dazu, Zahlweise festlegen. Alles Weitere übernehmen wir.</p>
+    <h1>Starten wir.</h1><p class="lede">Zuerst eine Frage: Was soll sich bei Ihnen in den nächsten zwölf Monaten ändern?</p>
+    <div class="chips" id="goals" style="margin-bottom:18px"></div>
+    <span class="lbl" style="margin-top:4px">Ihr Paket</span>
     <div class="chips" id="cats" style="margin-bottom:14px"></div>
     <div class="pk" id="pk"></div>
     <div id="custom" hidden style="margin-top:12px"><div class="f2">
@@ -2413,7 +2422,8 @@ section.v{display:none}section.v.on{display:block;animation:fade .35s var(--ease
     </div></div>
     <div id="addWrap"><span class="lbl">Bausteine dazu</span><div class="chips" id="adds"></div></div>
     <div id="lzWrap"><span class="lbl">Laufzeit der Betreuung</span><div class="chips" id="lz"></div><p class="note" id="lzNote" style="margin:8px 0 0"></p></div>
-    <div id="mgWrap"><span class="lbl">Ihre Marge, für die Erfolgsbeteiligung <output id="mgO" style="color:var(--acc)"></output></span><input type="range" id="mg" min="10" max="40" step="1" value="25" style="width:100%;accent-color:var(--acc)"></div>
+    <div id="valWrap"><span class="lbl">Ihr typischer Auftrag <output id="avgO" style="color:var(--acc)"></output></span><input type="range" id="avg" min="5000" max="250000" step="5000" value="40000" style="width:100%;accent-color:var(--acc)">
+    <span class="lbl">Ihre Marge <output id="mgO" style="color:var(--acc)"></output></span><input type="range" id="mg" min="10" max="40" step="1" value="25" style="width:100%;accent-color:var(--acc)"></div>
     <span class="lbl">Zahlweise</span><div class="chips" id="pm"></div>
     <span class="lbl">Wann soll es losgehen?</span><div class="chips" id="start"></div>
     <div class="nav"><span></span><button class="btn go" data-go="2">Weiter</button></div>
@@ -2449,6 +2459,7 @@ section.v{display:none}section.v.on{display:block;animation:fade .35s var(--ease
     <div class="big" id="doneTitle">Willkommen bei VANTOR.</div>
     <p class="lede" id="doneTxt"></p>
     
+    <div class="note2"><div class="ph" data-photo="benjamin">BK</div><div><p id="noteTxt">Danke für Ihr Vertrauen. Ab jetzt sind Falk und ich Ihre festen Ansprechpartner, ohne Hotline und ohne Weiterreichen.</p><small>Benjamin Krieg, Gründer</small></div></div>
     <div class="kick" id="kickBox">
      <div class="kh"><span class="kn">Letzter Schritt</span><b>Wann passt Ihnen der Kick-off?</b><small>30 Minuten per Video. Danach liegt Ihr Erstkonzept in 48 Stunden auf dem Tisch.</small></div>
      <div class="days" id="kDays"></div>
@@ -2506,16 +2517,17 @@ setTimeout(()=>{if($('gear').hidden&&!window.claude)$('gear').hidden=false},1500
 const CATS=[['pool','VANTOR Pool'],['web','Websites'],['sales','Vertrieb'],['ind','Individuell']];
 const PK=[
  {id:'fundament',cat:'pool',t:'Fundament · Conversion-Website',once:3500,rate:350,mon:590,lzRec:6,prov:false,live:'etwa 2 Wochen',inc:['Landingpage auf Anruf, WhatsApp und Formular gebaut','Bis zu 200 Orts- und Leistungsseiten','Conversion-Texte von uns','Lokales SEO mit Schema.org','Google-Unternehmensprofil optimiert','Tracking, DSGVO-sauber']},
- {id:'wachstum',cat:'pool',t:'Wachstum · Anfrage-System',tag:'Am häufigsten gewählt',once:3500,mon:895,lzRec:6,prov:true,live:'etwa 3 Wochen',inc:['Conversion-Landingpage inkl. Texte','Google-Ads-Kampagne','Meta-Kampagne (Facebook, Instagram)','Monatlich SEO, neue Creatives, Optimierung','Reporting: Kosten pro Anfrage und pro Auftrag']},
- {id:'marktfuehrer',cat:'pool',t:'Marktführer · System mit Konfigurator',tag:'Das System hinter 328.000 €',once:9800,rate:980,mon:990,lzRec:12,prov:true,live:'etwa 4 bis 5 Wochen',inc:['Alles aus Wachstum','Bis zu 200 Unterseiten und Google-Unternehmensprofil','Produkt-Konfigurator mit Preisrahmen','KI-Chat-Assistent, CRM mit Auto-Follow-up','Content-Tag vor Ort','Anfragen und Kundendaten gehören Ihnen']},
+ {id:'wachstum',cat:'pool',t:'Wachstum · Anfrage-System',once:3500,mon:895,lzRec:6,prov:true,live:'etwa 3 Wochen',inc:['Conversion-Landingpage inkl. Texte','Google-Ads-Kampagne','Meta-Kampagne (Facebook, Instagram)','Monatlich SEO, neue Creatives, Optimierung','Reporting: Kosten pro Anfrage und pro Auftrag']},
+ {id:'marktfuehrer',cat:'pool',t:'Marktführer · System mit Konfigurator',tag:'Empfohlen · das System hinter 328.000 €',once:9800,rate:980,mon:990,lzRec:12,prov:true,live:'etwa 4 bis 5 Wochen',inc:['Alles aus Wachstum','Bis zu 200 Unterseiten und Google-Unternehmensprofil','Produkt-Konfigurator mit Preisrahmen','KI-Chat-Assistent, CRM mit Auto-Follow-up','Content-Tag vor Ort','Anfragen und Kundendaten gehören Ihnen']},
  {id:'onepager',cat:'web',t:'Starter · One-Pager',once:1400,rate:140,mon:190,lzRec:3,prov:false,live:'1 Woche',inc:['Conversion-Landing, eine Seite','Mobile-first, handgeschrieben','Local SEO Basics','Kontaktformular und WhatsApp']},
  {id:'fullsite',cat:'web',t:'Signature · Full-Site',tag:'Empfohlen',once:3500,rate:350,mon:590,lzRec:6,prov:false,live:'2 bis 3 Wochen',inc:['Bis zu 200 Unterseiten für jeden Ort und jede Leistung','Full Local SEO und Schema.org','Conversion-Texte inklusive','Kalender und Buchungssystem','Google-Business-Optimierung','6 Monate Bugfix-Garantie']},
  {id:'fullstack',cat:'web',t:'Authority · Full-Stack',once:9800,rate:980,mon:990,lzRec:12,prov:true,live:'3 bis 5 Wochen',inc:['Alles aus Signature','KI-Chat-Assistent','Meta- und Google-Ads-Setup','Sales-Funnel und Lead-Magnet','CRM-Anbindung','Produkt-Konfigurator mit Preisrahmen','Strategie-Consulting, 4 Stunden']},
- {id:'consulting',cat:'sales',t:'Sales Consulting · 12 Monate',once:9500,mon:7900,lzFix:12,prov:false,live:'Start nach Kick-off',inc:['Alles aus dem größten Paket: Seite, Konfigurator, Google und Meta','Gesprächsleitfäden, Einwandbehandlung, Vorlagen','CRM eingerichtet und angebunden','Monatlich Training und Strategie mit Benjamin','Recruiting-Kampagne bei Bedarf','Ausstieg nach 90 Tagen möglich']},
+ {id:'consulting',cat:'sales',t:'Sales Consulting · 12 Monate',cap:'Benjamin betreut das selbst, deshalb höchstens 5 Betriebe gleichzeitig.',once:9500,mon:7900,lzFix:12,prov:false,live:'Start nach Kick-off',inc:['Alles aus dem größten Paket: Seite, Konfigurator, Google und Meta','Gesprächsleitfäden, Einwandbehandlung, Vorlagen','CRM eingerichtet und angebunden','Monatlich Training und Strategie mit Benjamin','Recruiting-Kampagne bei Bedarf','Ausstieg nach 90 Tagen möglich']},
  {id:'custom',cat:'ind',t:'Individuell, wie im Gespräch vereinbart',once:5000,mon:895,lzRec:6,prov:true,live:'nach Vereinbarung',inc:[]}];
 const ADDS=[['chat','KI-Chat-Assistent',1200],['phone','KI-Telefonassistent',1900],['crm','CRM und Auto-Follow-up',900],['reviews','Bewertungs-System',490]];
 const STARTS=[['dez','Dezember','live zur Planungssaison'],['jan','Januar',''],['feb','Februar','']];
-const S={cat:'pool',pk:'marktfuehrer',start:'dez',step:1,signed:false,pay:'ueb',adds:new Set(),lz:12,mg:25,pm:'half'};
+const GOALS=['Mehr qualifizierte Anfragen','Größere Projekte','Weniger Zeit am Telefon','Planbare Auslastung','Unabhängig von Empfehlungen'];
+const S={goals:new Set(),avg:40000,cat:'pool',pk:'marktfuehrer',start:'dez',step:1,signed:false,pay:'ueb',adds:new Set(),lz:12,mg:25,pm:'half'};
 const skontoP=()=>Math.max(0,Math.min(10,+String(CFG.skonto??'3').replace(',','.')||0));
 const provP=()=>Math.round((3+Math.max(0,Math.min(1,(S.mg-15)/15))*2)*10)/10;
 function pkg(){const p=Object.assign({},PK.find(x=>x.id===S.pk));if(p.id==='custom'){p.t=$('cName').value||'Individuelles Paket';p.once=+String($('cOnce').value).replace(/\D/g,'')||0;p.mon=+String($('cMon').value).replace(/\D/g,'')||0;p.inc=[p.t]}return p}
@@ -2526,10 +2538,13 @@ function calc(){const p=pkg(),ust=CFG.ust19?.19:0,addSum=ADDS.filter(a=>S.adds.h
  else if(S.pm==='rate'&&p.rate){due=p.rate;label='Erste Rate heute';rest=`Dann 11 weitere Raten zu ${eur(p.rate)}.`}
  else{due=Math.round(once*50)/100;label='Anzahlung heute, 50 %';rest='Restbetrag bei Go-live.'}
  const lz=p.lzFix||S.lz;return{p,addSum,rab,once,due,dueG:Math.round(due*(1+ust)*100)/100,label,rest,ust,lz,sk,prov:p.prov?provP():0}}
+function valBox(c){const db=S.avg*(S.mg-(c.prov||0))/100,year=c.once+12*(c.p.mon||0),be=db>0?Math.max(1,Math.ceil(year/db)):null;
+ return db>0?`<div class="val"><small style="margin:0">Ein Auftrag bringt Ihnen</small><div class="vb">${eur(Math.round(db/100)*100)} Deckungsbeitrag</div><small>${be?`Ab ${be} ${be===1?'zusätzlichem Auftrag':'zusätzlichen Aufträgen'} trägt sich das erste Jahr komplett, inklusive Betreuung.`:''} Rechnung mit Ihren Werten, ohne Werbebudget.</small></div>`:''}
 function render(){
+ $('goals').innerHTML=GOALS.map(g=>`<button class="chip ${S.goals.has(g)?'on':''}" data-goal="${g}">${g}</button>`).join('');
  $('cats').innerHTML=CATS.map(([id,t])=>`<button class="chip ${S.cat===id?'on':''}" data-cat="${id}">${t}</button>`).join('');
- const list=PK.filter(p=>p.cat===S.cat);if(!list.find(p=>p.id===S.pk)){S.pk=list[list.length>2?2:0].id}
- $('pk').innerHTML=list.map(p=>`<button class="pkg ${S.pk===p.id?'on':''}" data-pk="${p.id}"><span class="rd"></span><span><b>${p.t}${p.tag?`<span class="tag">${p.tag}</span>`:''}</b>${p.inc.length?`<ul class="incl">${p.inc.map(i=>`<li>${i}</li>`).join('')}</ul>`:'<small>Preis und Umfang wie besprochen eintragen.</small>'}<small>Live in ${p.live}</small></span><span class="pr">${p.id==='custom'?'frei':eur(p.once)}<span>${p.cat==='sales'?'Setup':'einmalig'}${p.rate?` oder 12 × ${eur(p.rate)}`:''}</span>${p.mon?`<span style="font-size:14px;margin-top:4px;color:var(--ink)">+ ${eur(p.mon)} / Monat</span>`:''}${p.prov?'<span>+ 3–5 % auf Aufträge</span>':''}</span></button>`).join('');
+ const list=PK.filter(p=>p.cat===S.cat).sort((a,b)=>b.once+12*b.mon-(a.once+12*a.mon));const firm=$('firma').value.trim()||CFG.kFirma||'';if(!list.find(p=>p.id===S.pk)){S.pk=list[list.length>2?2:0].id}
+ $('pk').innerHTML=list.map(p=>`<button class="pkg ${S.pk===p.id?'on':''}" data-pk="${p.id}"><span class="rd"></span><span><b>${p.t}${p.tag?`<span class="tag">${p.tag}</span>`:''}</b>${firm&&p.id!=='custom'?`<small style="margin-top:2px">Für ${firm}</small>`:''}${p.cap?`<small class="cap">${p.cap}</small>`:''}${p.inc.length?`<ul class="incl">${p.inc.map(i=>`<li>${i}</li>`).join('')}</ul>`:'<small>Preis und Umfang wie besprochen eintragen.</small>'}<small>Live in ${p.live}</small></span><span class="pr">${p.id==='custom'?'frei':eur(p.once)}<span>${p.cat==='sales'?'Setup':'einmalig'}${p.rate?` oder 12 × ${eur(p.rate)}`:''}</span>${p.mon?`<span style="font-size:14px;margin-top:4px;color:var(--ink)">+ ${eur(p.mon)} / Monat</span>`:''}${p.prov?'<span>+ 3–5 % auf Aufträge</span>':''}</span></button>`).join('');
  const p=pkg();$('custom').hidden=p.id!=='custom';
  $('addWrap').hidden=p.cat==='sales';
  $('adds').innerHTML=ADDS.map(([id,t,pr])=>`<button class="chip ${S.adds.has(id)?'on':''}" data-add="${id}">${t} · ${eur(pr)}</button>`).join('');
@@ -2537,14 +2552,14 @@ function render(){
  if(p.lzRec&&!S.lzTouched)S.lz=p.lzRec;
  $('lz').innerHTML=[3,6,12].map(m=>`<button class="chip ${S.lz===m?'on':''}" data-lz="${m}">${m} Monate${m===p.lzRec?' · empfohlen':''}</button>`).join('');
  $('lzNote').textContent=S.lz>=6?'Mit der Anfrage-Garantie: Erreichen wir die vereinbarten Ziele nicht, arbeiten wir ohne Betreuungskosten weiter, bis sie erreicht sind.':'Die Anfrage-Garantie gilt ab 6 Monaten Betreuung.';
- $('mgWrap').hidden=!p.prov;$('mgO').textContent=`${S.mg} % · Beteiligung ${provP().toLocaleString('de-DE')} %`;
+ $('avgO').textContent=eur(S.avg);$('mgO').textContent=p.prov?`${S.mg} % · Ihre Erfolgsbeteiligung ${provP().toLocaleString('de-DE')} %`:`${S.mg} %`;
  const pms=[['half','50 % jetzt, 50 % bei Go-live'],['full',`Alles sofort${skontoP()?`, ${skontoP()} % Skonto`:''}`]];if(p.rate)pms.push(['rate',`12 Raten à ${eur(p.rate)}`]);if(!pms.find(x=>x[0]===S.pm))S.pm='half';
  $('pm').innerHTML=pms.map(([id,t])=>`<button class="chip ${S.pm===id?'on':''}" data-pm="${id}">${t}</button>`).join('');
  $('start').innerHTML=STARTS.map(([id,t,s2])=>`<button class="chip ${S.start===id?'on':''}" data-st="${id}">${t}${s2?` · <span style="font-weight:600;color:var(--acc)">${s2}</span>`:''}</button>`).join('');
  const c=calc(),st=STARTS.find(x=>x[0]===S.start);
- $('sum').innerHTML=`<div class="row"><span>${c.p.t}</span><b>${eur(c.p.once)}</b></div>${ADDS.filter(a=>S.adds.has(a[0])).map(a=>`<div class="row"><span>${a[1]}</span><b>${eur(a[2])}</b></div>`).join('')}${c.rab?`<div class="row"><span>${CFG.rabattTxt||'Sonderkondition'}</span><b style="color:var(--acc)">− ${eur(c.rab)}</b></div>`:''}${S.pm==='full'&&c.sk?`<div class="row"><span>Skonto ${c.sk} %</span><b style="color:var(--acc)">− ${eur(Math.round(c.once*c.sk)/100)}</b></div>`:''}${c.p.mon?`<div class="row"><span>Betreuung${c.p.cat==='sales'?'':' ab Go-live'}</span><b>${eur(c.p.mon)} / Monat</b></div><div class="row"><span>Laufzeit</span><b>${c.lz} Monate</b></div>`:''}${c.prov?`<div class="row"><span>Erfolgsbeteiligung</span><b>${c.prov.toLocaleString('de-DE')} % auf Aufträge</b></div>`:''}<div class="row"><span>Start</span><b>${st[1]}</b></div><div class="row big"><span>${c.label}</span><b>${eur(c.dueG)}</b></div><div class="mini">${CFG.ust19?'inkl. 19 % USt. Alle anderen Beträge zzgl. USt.':'Alle Beträge netto.'} ${c.rest} Werbebudget zahlen Sie direkt an Google und Meta.</div>`;
+ $('sum').innerHTML=`<div class="row"><span>${c.p.t}</span><b>${eur(c.p.once)}</b></div>${ADDS.filter(a=>S.adds.has(a[0])).map(a=>`<div class="row"><span>${a[1]}</span><b>${eur(a[2])}</b></div>`).join('')}${c.rab?`<div class="row"><span>${CFG.rabattTxt||'Sonderkondition'}</span><b style="color:var(--acc)">− ${eur(c.rab)}</b></div>`:''}${S.pm==='full'&&c.sk?`<div class="row"><span>Skonto ${c.sk} %</span><b style="color:var(--acc)">− ${eur(Math.round(c.once*c.sk)/100)}</b></div>`:''}${c.p.mon?`<div class="row"><span>Betreuung${c.p.cat==='sales'?'':' ab Go-live'}</span><b>${eur(c.p.mon)} / Monat</b></div><div class="row"><span>Laufzeit</span><b>${c.lz} Monate</b></div>`:''}${c.prov?`<div class="row"><span>Erfolgsbeteiligung</span><b>${c.prov.toLocaleString('de-DE')} % auf Aufträge</b></div>`:''}<div class="row"><span>Start</span><b>${st[1]}</b></div><div class="row big"><span>${c.label}</span><b>${eur(c.dueG)}</b></div><div class="mini">${CFG.ust19?'inkl. 19 % USt. Alle anderen Beträge zzgl. USt.':'Alle Beträge netto.'} ${c.rest} Werbebudget zahlen Sie direkt an Google und Meta.</div>${valBox(c)}<div class="proof"><b>Referenz:</b> Die allererste Anfrage über unseren Konfigurator wurde ein Auftrag über <b>328.000 €</b>. 17 Anfragen in viereinhalb Monaten, bei rund 1.000 € Werbebudget im Monat.</div>`;
  const pmTxt=S.pm==='full'?`Zahlung des Gesamtbetrags bei Auftrag${c.sk?` abzüglich ${c.sk} % Skonto`:''}.`:S.pm==='rate'?`12 monatliche Raten zu ${eur(c.p.rate)}.`:'50 % Anzahlung bei Auftrag, 50 % bei Go-live.';
- $('terms').innerHTML=`<h4>Leistung</h4><p>${c.p.inc.join(', ')}${c.addSum?'; dazu '+ADDS.filter(a=>S.adds.has(a[0])).map(a=>a[1]).join(', '):''}. Live in ${c.p.live}.</p>
+ $('terms').innerHTML=`${S.goals.size?`<h4>Ihr Ziel</h4><p>${[...S.goals].join(', ')}.</p>`:''}<h4>Leistung</h4><p>${c.p.inc.join(', ')}${c.addSum?'; dazu '+ADDS.filter(a=>S.adds.has(a[0])).map(a=>a[1]).join(', '):''}. Live in ${c.p.live}.</p>
  <h4>Preis und Zahlung</h4><p>${eur(c.once)} ${c.p.cat==='sales'?'Setup':'einmalig'}${c.rab?` (inkl. ${CFG.rabattTxt||'Sonderkondition'} von ${eur(c.rab)})`:''}. ${pmTxt}${c.p.mon?` Betreuung ${eur(c.p.mon)} pro Monat, Laufzeit ${c.lz} Monate.`:''} ${CFG.ust19?'Alle Beträge zzgl. 19 % USt.':''}</p>
  ${c.prov?`<h4>Erfolgsbeteiligung</h4><p>${c.prov.toLocaleString('de-DE')} % netto auf Aufträge aus unseren Leads, fällig bei Unterschrift des Endkunden. Der Satz richtet sich nach Ihrer Marge: 3 % bei 15 %, 5 % bei 30 %.</p><h4>Partner-Modell</h4><p>Erreicht unsere Provision im Schnitt der letzten drei Monate 6.000 € pro Monat, entfällt unsere Pauschale. Ab 10.000 € zahlen wir zusätzlich Ihr Werbebudget bis 2.500 € pro Monat, ab 15.000 € bis 5.000 € pro Monat.</p>`:''}
  ${c.p.mon&&c.lz>=6&&c.p.cat!=='sales'?`<h4>Anfrage-Garantie</h4><p>Wir legen vor dem Start gemeinsam realistische Ziele für qualifizierte Anfragen fest. Erreichen wir sie nicht, arbeiten wir ohne Betreuungskosten weiter, bis sie erreicht sind. Voraussetzung: Sie rufen Anfragen innerhalb eines Werktags zurück.</p>`:''}
@@ -2557,13 +2572,14 @@ function render(){
  $('to3').disabled=!($('firma').value.trim()&&$('name').value.trim()&&$('mail').value.includes('@'));
 }
 document.addEventListener('click',e=>{let b;
- if(b=e.target.closest('[data-cat]')){S.cat=b.dataset.cat;S.lzTouched=false;render()}
+ if(b=e.target.closest('[data-goal]')){const g=b.dataset.goal;S.goals.has(g)?S.goals.delete(g):S.goals.add(g);render()}
+ else if(b=e.target.closest('[data-cat]')){S.cat=b.dataset.cat;S.lzTouched=false;render()}
  else if(b=e.target.closest('[data-pk]')){S.pk=b.dataset.pk;S.lzTouched=false;render()}
  else if(b=e.target.closest('[data-add]')){const k=b.dataset.add;S.adds.has(k)?S.adds.delete(k):S.adds.add(k);render()}
  else if(b=e.target.closest('[data-lz]')){S.lz=+b.dataset.lz;S.lzTouched=true;render()}
  else if(b=e.target.closest('[data-pm]')){S.pm=b.dataset.pm;render()}
  else if(b=e.target.closest('[data-st]')){S.start=b.dataset.st;render()}});
-$('mg').addEventListener('input',e=>{S.mg=+e.target.value;render()});['cName','cOnce','cMon'].forEach(id=>$(id).addEventListener('input',render));
+$('mg').addEventListener('input',e=>{S.mg=+e.target.value;render()});$('avg').addEventListener('input',e=>{S.avg=+e.target.value;render()});['cName','cOnce','cMon'].forEach(id=>$(id).addEventListener('input',render));
 ['firma','name','mail','tel','adr','ust'].forEach(id=>$(id).addEventListener('input',render));$('agree').addEventListener('change',render);
 function go(n){S.step=n;document.querySelectorAll('section.v').forEach(s=>s.classList.toggle('on',s.id==='s'+n));if(n===3)setTimeout(sizeSig,30);if(n===4)payRender();render();scrollTo({top:0,behavior:'smooth'})}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b&&!b.disabled)go(+b.dataset.go)});
@@ -2601,16 +2617,16 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-cp]'
 /* Abschluss */
 function confText(){const c=calc(),st=STARTS.find(x=>x[0]===S.start),d=new Date().toLocaleString('de-DE');
  const adds=ADDS.filter(x=>S.adds.has(x[0])).map(x=>`${x[1]}: ${eur(x[2])}`).join('\n');
- return `AUFTRAGSBESTÄTIGUNG VANTOR\n\nAuftraggeber: ${$('firma').value}\nAnsprechpartner: ${$('name').value}\nAnschrift: ${$('adr').value}\nE-Mail: ${$('mail').value}${$('tel').value?'\nTelefon: '+$('tel').value:''}${$('ust').value?'\nUSt-IdNr.: '+$('ust').value:''}\n\nPaket: ${c.p.t}\n${c.p.cat==='sales'?'Setup':'Einmalig'}: ${eur(c.p.once)}${adds?'\n'+adds:''}${c.rab?'\n'+(CFG.rabattTxt||'Sonderkondition')+': −'+eur(c.rab):''}\nSumme einmalig: ${eur(c.once)} netto\nZahlweise: ${({half:'50 % bei Auftrag, 50 % bei Go-live',full:'Gesamtbetrag sofort'+(c.sk?' mit '+c.sk+' % Skonto':''),rate:'12 Raten à '+eur(c.p.rate||0)})[S.pm]}\nHeute fällig: ${eur(c.dueG)}${CFG.ust19?' inkl. 19 % USt.':''}\n${c.p.mon?`Betreuung: ${eur(c.p.mon)} / Monat, Laufzeit ${c.lz} Monate\n`:''}${c.prov?`Erfolgsbeteiligung: ${c.prov.toLocaleString('de-DE')} % netto auf Aufträge aus unseren Leads\nPartner-Modell: ab 6.000 € Provision (3-Monats-Schnitt) entfällt die Pauschale; ab 10.000 € Werbebudget bis 2.500 €/Monat, ab 15.000 € bis 5.000 €/Monat\n`:''}Start: ${st[1]}\nZahlungsart: ${({ueb:'Überweisung',karte:'Kreditkarte',pp:'PayPal'})[S.pay]}\n\n"${$('agreeTxt').textContent}"\nBestätigt und unterschrieben am ${d}.`}
+ return `AUFTRAGSBESTÄTIGUNG VANTOR\n${S.goals.size?'\nZiel: '+[...S.goals].join(', ')+'\n':''}\nAuftraggeber: ${$('firma').value}\nAnsprechpartner: ${$('name').value}\nAnschrift: ${$('adr').value}\nE-Mail: ${$('mail').value}${$('tel').value?'\nTelefon: '+$('tel').value:''}${$('ust').value?'\nUSt-IdNr.: '+$('ust').value:''}\n\nPaket: ${c.p.t}\n${c.p.cat==='sales'?'Setup':'Einmalig'}: ${eur(c.p.once)}${adds?'\n'+adds:''}${c.rab?'\n'+(CFG.rabattTxt||'Sonderkondition')+': −'+eur(c.rab):''}\nSumme einmalig: ${eur(c.once)} netto\nZahlweise: ${({half:'50 % bei Auftrag, 50 % bei Go-live',full:'Gesamtbetrag sofort'+(c.sk?' mit '+c.sk+' % Skonto':''),rate:'12 Raten à '+eur(c.p.rate||0)})[S.pm]}\nHeute fällig: ${eur(c.dueG)}${CFG.ust19?' inkl. 19 % USt.':''}\n${c.p.mon?`Betreuung: ${eur(c.p.mon)} / Monat, Laufzeit ${c.lz} Monate\n`:''}${c.prov?`Erfolgsbeteiligung: ${c.prov.toLocaleString('de-DE')} % netto auf Aufträge aus unseren Leads\nPartner-Modell: ab 6.000 € Provision (3-Monats-Schnitt) entfällt die Pauschale; ab 10.000 € Werbebudget bis 2.500 €/Monat, ab 15.000 € bis 5.000 €/Monat\n`:''}Start: ${st[1]}\nZahlungsart: ${({ueb:'Überweisung',karte:'Kreditkarte',pp:'PayPal'})[S.pay]}\n\n"${$('agreeTxt').textContent}"\nBestätigt und unterschrieben am ${d}.`}
 $('finish').addEventListener('click',()=>{S.step=5;document.querySelectorAll('section.v').forEach(s=>s.classList.toggle('on',s.id==='s5'));render();
  const nm=$('name').value.trim().split(/\s+/).map(w=>w?w[0].toUpperCase()+w.slice(1):w).join(' ');$('doneTitle').textContent=nm?`Willkommen, ${nm}.`:'Willkommen bei VANTOR.';
  $('doneTxt').textContent=`Ihr Auftrag für ${$('firma').value||'Ihr Unternehmen'} ist erteilt. Jetzt nur noch den Kick-off wählen, dann geht es los.`;
  const t=confText();$('mailBtn').href=`mailto:${CFG.ownerMail}?cc=${encodeURIComponent($('mail').value)}&subject=${encodeURIComponent('Auftrag '+($('firma').value||'')+' · VANTOR')}&body=${encodeURIComponent(t)}`;
- kickRender();burst();scrollTo({top:0,behavior:'smooth'})});
+ {const g=[...S.goals];if(g.length)$('noteTxt').textContent=`Danke für Ihr Vertrauen. Ihr Ziel haben wir notiert: ${g.join(', ')}. Daran messen wir uns. Ab jetzt sind Falk und ich Ihre festen Ansprechpartner, ohne Hotline und ohne Weiterreichen.`;document.querySelectorAll('.note2 [data-photo]').forEach(el=>{if(!el.querySelector('img')&&PHOTOS[el.dataset.photo]){el.textContent='';const i=new Image();i.src=PHOTOS[el.dataset.photo];i.alt='Benjamin Krieg';el.appendChild(i)}})}kickRender();burst();scrollTo({top:0,behavior:'smooth'})});
 $('cpBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(confText()+(K.slot?`\n\nKick-off: ${fmtD(K.date)}, ${K.slot} Uhr`:''));toast('Bestätigung kopiert')}catch(e){toast('Kopieren nicht möglich')}});
 $('dlBtn').addEventListener('click',async()=>{const sig=S.signed?cv.toDataURL('image/png'):'';const doc=`<!DOCTYPE html><html lang="de"><meta charset="utf-8"><title>Auftragsbestätigung VANTOR</title><body style="font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;line-height:1.55"><pre style="white-space:pre-wrap;font-family:inherit">${(confText()+(K.slot?`\n\nKick-off: ${fmtD(K.date)}, ${K.slot} Uhr`:'')).replace(/</g,'&lt;')}</pre>${sig?`<p>Unterschrift:</p><img src="${sig}" alt="Unterschrift" style="max-width:360px;border-bottom:1px solid #999">`:''}</body></html>`;
  try{const dl=await claude.use('downloads');if(!dl){window.print();return}await dl.save({filename:'Auftragsbestaetigung-VANTOR-'+(($('firma').value||'Kunde').replace(/[^A-Za-z0-9]+/g,'-'))+'.html',data:doc});toast('Gespeichert')}catch(e){if(e&&e.code==='declined')return;window.print()}});
-$('reset').addEventListener('click',()=>{['firma','name','mail','tel','adr','ust'].forEach(id=>$(id).value='');CFG.kFirma='';CFG.kName='';CFG.rabatt='';CFG.rabattTxt='';saveCfg();document.querySelectorAll('[data-k]').forEach(el=>{if(el.type!=='checkbox')el.value=CFG[el.dataset.k]||''});$('sigclr').click();$('agree').checked=false;K.day=null;K.slot=null;S.cat='pool';S.pk='marktfuehrer';S.adds=new Set();S.pm='half';S.start='dez';S.lzTouched=false;go(1);$('drawer').classList.remove('on');toast('Bereit für den nächsten Kunden')});
+$('reset').addEventListener('click',()=>{['firma','name','mail','tel','adr','ust'].forEach(id=>$(id).value='');CFG.kFirma='';CFG.kName='';CFG.rabatt='';CFG.rabattTxt='';saveCfg();document.querySelectorAll('[data-k]').forEach(el=>{if(el.type!=='checkbox')el.value=CFG[el.dataset.k]||''});$('sigclr').click();$('agree').checked=false;K.day=null;K.slot=null;S.goals=new Set();S.cat='pool';S.pk='marktfuehrer';S.adds=new Set();S.pm='half';S.start='dez';S.lzTouched=false;go(1);$('drawer').classList.remove('on');toast('Bereit für den nächsten Kunden')});
 /* Kick-off */
 const K={day:null,slot:null};
 const WD=['So','Mo','Di','Mi','Do','Fr','Sa'],MO=['Jan.','Feb.','März','Apr.','Mai','Juni','Juli','Aug.','Sep.','Okt.','Nov.','Dez.'];
